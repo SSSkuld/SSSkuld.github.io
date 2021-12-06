@@ -1,10 +1,14 @@
 ---
 title: 基于objc4的Runtime原理解读（一）
 date: 2021-11-30 22:45:52
-tags: iOS
+tags: 
+- iOS
+- objective-c
+- runtime
+categories: iOS
 ---
 ## 前言
-学习object-c，runtime一直是一个绕不过去的话题，为什么iOS系统开发选择使用oc而不是c++呢？原因就是runtime这一大利器。
+学习objective-c，runtime一直是一个绕不过去的话题，为什么iOS系统开发选择使用oc而不是c++呢？原因就是runtime这一大利器。
 
 > The Objective-C language defers as many decisions as it can from compile time and link time to runtime. Whenever possible, it does things dynamically. This means that the language requires not just a compiler, but also a runtime system to execute the compiled code. The runtime system acts as a kind of operating system for the Objective-C language; it’s what makes the language work.
 

@@ -1,7 +1,11 @@
 ---
 title: Windows+Clion环境搭建
 date: 2021-11-19 00:23:57
-tags: Linux
+tags: 
+- Linux
+- CLion
+- WSL
+categories: Linux
 ---
 ## 背景
 最近开始学习网络编程，自己的Windows主机上一直没有搭建相关的开发环境，下载Clion后发现缺少一系列的编译工具链。网上查阅资料后，发现使用Windows的WSL工具，不用安装虚拟机就可以方便的拥有一个Linux环境，并且CLion也可以在这个环境下进行编译。
