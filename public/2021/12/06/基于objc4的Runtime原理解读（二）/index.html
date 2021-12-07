@@ -107,6 +107,68 @@
             <div class="container">
     
     
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
 
     
     <article class="post-wrap">
@@ -124,12 +186,36 @@
                         </span>
                     
                     
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/iOS/">iOS</a>
+                            
+                        </span>
+                    
                 </div>
             
         </header>
 
         <div class="post-content">
-            
+            <h2 id="isKindOfClass和isMemberOfClass"><a href="#isKindOfClass和isMemberOfClass" class="headerlink" title="isKindOfClass和isMemberOfClass"></a>isKindOfClass和isMemberOfClass</h2><p>直接看一下这两个方法的实现源码。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">+ (BOOL)isMemberOfClass:(Class)cls &#123;</span><br><span class="line">    return self-&gt;ISA() &#x3D;&#x3D; cls;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (BOOL)isMemberOfClass:(Class)cls &#123;</span><br><span class="line">    return [self class] &#x3D;&#x3D; cls;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">+ (BOOL)isKindOfClass:(Class)cls &#123;</span><br><span class="line">    for (Class tcls &#x3D; self-&gt;ISA(); tcls; tcls &#x3D; tcls-&gt;getSuperclass()) &#123;</span><br><span class="line">        if (tcls &#x3D;&#x3D; cls) return YES;</span><br><span class="line">    &#125;</span><br><span class="line">    return NO;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (BOOL)isKindOfClass:(Class)cls &#123;</span><br><span class="line">    for (Class tcls &#x3D; [self class]; tcls; tcls &#x3D; tcls-&gt;getSuperclass()) &#123;</span><br><span class="line">        if (tcls &#x3D;&#x3D; cls) return YES;</span><br><span class="line">    &#125;</span><br><span class="line">    return NO;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，对于类方法和实例方法的实现是有区别的，对于类方法，通过自己的isa指针获取类类型；对于实例方法，则是通过object_getClass获取类类型。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">+ (Class)class &#123;</span><br><span class="line">    return self;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (Class)class &#123;</span><br><span class="line">    return object_getClass(self);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Class object_getClass(id obj)</span><br><span class="line">&#123;</span><br><span class="line">    if (obj) return obj-&gt;getIsa();</span><br><span class="line">    else return Nil;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>实际上，object_getClass方法最后也是取的类对象的isa指针，那么问题来了，实例类中isa指针指向了其类对象，那么类对象的isa指针又指向了哪里呢？</p>
+<h2 id="类与元类"><a href="#类与元类" class="headerlink" title="类与元类"></a>类与元类</h2><p>至此，“元类”的概念终于浮出水面，我们也得以明白为什么会存在元类这一概念。</p>
+<p>类对象的isa指针便指向了其元类，之所以引入元类这一概念，便是为了实例方法和类方法方法寻找逻辑上的统一。</p>
+<p><img src="class.png" alt="class"></p>
+<p>正如这张经典的图片所示，实例类的isa指针指向了其类对象，而类对象的isa指针指向了其元类。所有元类的isa指针均指向了根元类NSObject，对于NSObject元类，其isa指向了自己，superclass则指向NSObject类。</p>
+<p>在查看元类时，会发现元类的名称和类对象是相同的，但是其地址是不同的，可以通过class_isMetaClass方法进行判断。</p>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">@interface ObjcClass : NSObject</span><br><span class="line"></span><br><span class="line">@end</span><br><span class="line"></span><br><span class="line">BOOL check1 &#x3D; [(id)[NSObject class] isKindOfClass:[NSObject class]];</span><br><span class="line">BOOL check2 &#x3D; [(id)[NSObject class] isMemberOfClass:[NSObject class]];</span><br><span class="line">BOOL check3 &#x3D; [(id)[ObjcClass class] isKindOfClass:[ObjcClass class]];</span><br><span class="line">BOOL check4 &#x3D; [(id)[ObjcClass class] isMemberOfClass:[ObjcClass class]];</span><br><span class="line">BOOL check5 &#x3D; [(id)[ObjcClass class] isKindOfClass:[NSObject class]];</span><br><span class="line">BOOL check6 &#x3D; [(id)[ObjcClass class] isMemberOfClass:[NSObject class]];</span><br></pre></td></tr></table></figure>
+<p>对于这六个BOOL值，应该输出什么呢？</p>
+<p>结合之前的源码，+ (BOOL)isKindOfClass:(Class)cls方法内，首先判断传入的cls是否等于其元类，否则一直寻找其superclass，查看是否相等。+ (BOOL)isMemberOfClass:(Class)cls方法内，则直接判断cls的isa指针，即元类是否和cls相等。</p>
+<p>那么对于类对象来说，其isa指针和传入的类度对象本身永远不等，所以2、4、6的答案均为NO。</p>
+<p>对于check1来说，首先判断[NSObject class]是否和其元类相等，答案是否，之后判断[NSObject class]是否和其元类的superclass相等，根据上述图片可以看到相等，所以check1答案是YES。</p>
+<p>对于check3来说，首先判断[ObjcClass class]是否和其元类相等，答案是否，之后判断[ObjcClass class]是否和其元类的superclass，即NSObject元类相等，答案为否，最后判断[ObjcClass class]是否和[NSObject class]相等，答案是否，所以check3的答案是NO。</p>
+<p>对于check5来说，首先判断[NSObject class]是否和ObjcClass元类相等，答案是否，之后判断[NSObject class]是否和NSObject元类相等，答案是否，最后判断[NSObject class]是否和[NSObject class]相等，答案为是，所以check5的答案是YES。</p>
+
         </div>
 
         
@@ -146,6 +232,14 @@
                 <span>Tag(s):</span>
                 <span class="tag">
                     
+                    
+                        <a href="/tags/iOS/"># iOS</a>
+                    
+                        <a href="/tags/objective-c/"># objective-c</a>
+                    
+                        <a href="/tags/runtime/"># runtime</a>
+                    
+                        
                 </span>
             </div>
             <div>
