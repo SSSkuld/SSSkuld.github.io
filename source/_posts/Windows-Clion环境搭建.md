@@ -34,12 +34,15 @@ Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-L
 
 <b>
 【⚠】首先需要备份一下sources.list文件，很重要不要跳过。
-
-sudo cp /etc/apt/sources.list /etc/apt/sources.list.backup
 </b>
+
+```
+sudo cp /etc/apt/sources.list /etc/apt/sources.list.backup
+```
 
 之后执行vim /etc/apt/sources.list，替换文件内容即可。
 
+```
 deb http://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse
 deb-src http://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse
 deb http://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse
@@ -50,14 +53,19 @@ deb http://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe mu
 deb-src http://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse
 deb http://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse
 deb-src http://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse
+```
 
 之后更新软件
+```
 sudo apt-get update
 sudo apt-get upgrade
+```
 
 注意，此时如果对sources.list文件操作不当，可能会触发如下报错：
+```
 Malformed line 1 in source list /etc/apt/sources.list (type)
 The list of sources could not be read.
+```
 
 此时前往/etc/apt目录下，执行 sudo rm sources.list 删除文件
 之后sudo touch sources.list
