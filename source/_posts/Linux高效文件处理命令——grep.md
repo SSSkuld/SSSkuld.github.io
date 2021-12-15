@@ -2,8 +2,9 @@
 title: Linux高效文件处理命令——grep
 tags:
   - Linux
+  - 终端
 date: 2021-12-14 21:23:18
-categories:
+categories: Linux
 ---
 
 ## 前言
