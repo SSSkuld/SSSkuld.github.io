@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Skuld">
+
+
+
+
+
+<title>Linux高效文件处理命令——grep | Skuld&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 5.1.1"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Skuld&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Skuld&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Linux高效文件处理命令——grep</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Skuld</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">December 14, 2021&nbsp;&nbsp;21:23:18</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Linux/">Linux</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><h3 id="MacOS环境配置GNU版本grep"><a href="#MacOS环境配置GNU版本grep" class="headerlink" title="MacOS环境配置GNU版本grep"></a>MacOS环境配置GNU版本grep</h3><p>MacOS环境下自带grep命令，不过是BSD版本，使用<code>grep --version</code>命令即可查看版本。</p>
+<p>该版本对-r -p等参数不支持，需要安装GNU版本的grep命令才可执行。</p>
+<p>直接使用Homebrew进行安装即可。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install grep</span><br></pre></td></tr></table></figure>
+<p>网上很多教程说要携带<code>--with-default-names</code>参数进行grep命令覆盖，但此参数已经被废弃，无法使用。</p>
+<p>题外话，如果Homebrew提示需要更新CLT版本，执行<code>brew update-reset</code>即可。</p>
+<p>安装完GNU版本grep后，需要更新一下对应的<code>.bashrc</code>或者<code>.zshrc</code>文件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export PATH&#x3D;&quot;&#x2F;usr&#x2F;local&#x2F;opt&#x2F;grep&#x2F;libexec&#x2F;gnubin:$PATH&quot;</span><br></pre></td></tr></table></figure>
+<p>添加完成后对应执行<code>source .bashrc/.zshrc</code>便成功完成替换，此时再次输入<code>grep --version</code>看到输出为GNU版本即为替换成功。</p>
+<h3 id="grep命令"><a href="#grep命令" class="headerlink" title="grep命令"></a>grep命令</h3><p>基础命令格式如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep [OPTION] PATTERNS [FILE]</span><br></pre></td></tr></table></figure>
+<p>也可以配合管道命令｜一起使用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[FILE] | grep [OPTION] PATTERNS</span><br></pre></td></tr></table></figure>
+<p><code>PATTERNS</code>为要查询的匹配串，支持正则表达式。</p>
+<p><code>OPTION</code>为命令参数，可以输入多个，常用的参数如下：</p>
+<p><code>-B(NUM),  --before-context=NUM</code><br>输出匹配行的前NUM行</p>
+<p><code>-A(NUM),  --after-context=NUM</code><br>输出匹配行的后NUM行</p>
+<p><code>-C(NUM),  --context=NUM</code><br>输出匹配行的前后NUM行</p>
+<p><code>-r</code></p>
+<p><code>grep -r [PATTERN] .</code><br>在当前目录下递归搜索PATTERN，可以再添加–exclude-from=FILE或者–exclude-dir=GLOB进行过滤。</p>
+<p><code>-v</code><br>相当于not操作，查询不包含PATTERN的内容</p>
+<p><code>-c</code><br>输出文件匹配PATTERN的总行数</p>
+<p><code>-n</code><br>输出文件匹配PATTERN的所在行数</p>
+<p><code>grep [PATTERN1 \| PATTERN2] [FILE]</code><br>使用|符号匹配多个PATTERN</p>
+<h3 id="参考文稿"><a href="#参考文稿" class="headerlink" title="参考文稿"></a>参考文稿</h3><p><a target="_blank" rel="noopener" href="https://blog.cotes.info/posts/use-gnu-utilities-in-mac/">macOS 使用 GNU 命令</a></p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/Linux/"># Linux</a>
+                    
+                        <a href="/tags/%E7%BB%88%E7%AB%AF/"># 终端</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2021/12/06/%E5%9F%BA%E4%BA%8Eobjc4%E7%9A%84Runtime%E5%8E%9F%E7%90%86%E8%A7%A3%E8%AF%BB%EF%BC%88%E4%BA%8C%EF%BC%89/">基于objc4的Runtime原理解读（二）</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Skuld | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
