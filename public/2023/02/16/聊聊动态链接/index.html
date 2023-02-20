@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Skuld">
+
+
+
+
+
+<title>聊聊动态链接 | Skuld&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 5.1.1"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Skuld&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Skuld&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">聊聊动态链接</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Skuld</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">February 16, 2023&nbsp;&nbsp;21:17:52</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/iOS/">iOS</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>不深入涉及dyld源码的前提下，介绍一下动态链接的概念及原理，在iOS系统上的实现及应用。<br>一些需要提前了解的知识点：<br><strong>静态链接</strong></p>
+<ul>
+<li>最初始的应用程序只有一个文件，编译过程就是一个源文件到可执行文件的翻译。<br><img src="/2023/02/16/%E8%81%8A%E8%81%8A%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5/static_linker_1.png" alt="static_linker_1"></li>
+<li>随着应用程序的复杂度和规模不断增加，程序源码被拆分到多个文件，此时需要对多个目标文件的编译产物进行整合，最终产出一个可执行文件，静态链接器就此出现。<br><img src="/2023/02/16/%E8%81%8A%E8%81%8A%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5/static_linker_2.png" alt="static_linker_2"></li>
+<li>当一个应用程序的源文件增长到几千上万个时，每次改动后对所有源码进行编译变得非常耗时，此时静态库和ar工具应运而生。<br>ar工具把多个.o产物打包成一个.a静态库，链接器再将.a静态库和.o文件链接成可执行文件，这样避免了重复编译工作。<br><img src="/2023/02/16/%E8%81%8A%E8%81%8A%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5/static_linker_3.png" alt="static_linker_3"></li>
+</ul>
+<p><strong>ELF文件格式 / Mach-O文件格式 / DEX文件格式</strong></p>
+<ul>
+<li>所有的mach-o文件都包含了一个或多个数据段（Segment），每一个数据段都包含了零个或者多个段落（Section），每个section包含了一些特定类型的代码或者数据，数据段准确的数量以及布局由加载命令和文件类型决定。<br><img src="/2023/02/16/%E8%81%8A%E8%81%8A%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5/mach-o.png" alt="mach-o"></li>
+</ul>
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>静态链接存在的缺点：</p>
+<ul>
+<li>内存空间占用大，当多个目标文件需要链接相同的库时，会造成内存资源的浪费</li>
+<li>程序兼容性差，当其中一个链接的目标文件更新后，整个程序需要重新编译一遍，无法做到动态更新</li>
+</ul>
+<h2 id="基本思想"><a href="#基本思想" class="headerlink" title="基本思想"></a>基本思想</h2><p>系统全局仅存在一份动态链接库文件，程序运行时再进行链接。<br><img src="/2023/02/16/%E8%81%8A%E8%81%8A%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5/dyld-1.png" alt="dyld-1"></p>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><h3 id="装载时重定位（Rebasing）"><a href="#装载时重定位（Rebasing）" class="headerlink" title="装载时重定位（Rebasing）"></a>装载时重定位（Rebasing）</h3><p>静态链接通过重定位进行符号寻址，在静态链接器完成空间与地址分配后，便能确定所有目标符号的虚拟地址，对目标文件的外部符号进行重定位修正，这一步可以被称为链接时重定位。<br>但是静态链接的重定位方法并不适合动态链接库，动态链接库是在程序运行时才被加载至内存，当程序调用动态链接库文件代码段的绝对地址时，每个程序的重定位偏移量都会不同，没法做到多个程序共享同一份重定位后的动态链接库文件。</p>
+<p><strong>地址无关代码PIC （Position Independent Code）</strong><br>前提：ELF文件格式</p>
+<ul>
+<li>一个模块前面是若干页可读代码段，后面是若干页读写数据段</li>
+<li>在一个模块内，任何一条指令与其访问的数据之间的相对位置是固定的<br>我们期望动态链接库共享的指令在动态库装载时不需要因为装载地址的改变而改变，把那些需要重定位修改的部分抽离出来，与数据段放在一起。<br>这样动态链接库指令部分保持不变，被多个程序共享，数据部分则在每个程序进程中存在一份副本。</li>
+<li>分类<ul>
+<li>模块内部的函数调用<ul>
+<li>处于同一个模块，相对地址固定，不需要重定位</li>
+</ul>
+</li>
+<li>模块内部的数据访问<ul>
+<li>指令中不能包含数据的绝对地址，只能进行相对寻址，当前指令加上一个偏移量即可访问</li>
+</ul>
+</li>
+<li>模块外部的数据访问<ul>
+<li>模块外部的数据访问需要等到装载时才能确定，处理思想是把与地址相关的部分放到数据段中</li>
+<li>在数据段中建立全局偏移表GOT（Global Offset Table），代码指令需要访问外部变量时，首先访问GOT中的对应项，在装载时重定位修改GOT的偏移量，找到变量的目标地址</li>
+<li>同模块内部数据访问一样，我们可以知道GOT与代码指令之间的相对位置固定</li>
+</ul>
+</li>
+<li>模块外部的函数调用<ul>
+<li>同样使用GOT，GOT中保存的是目标函数的地址</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>总结</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="center"></th>
+<th align="center">指令跳转、调用</th>
+<th align="center">数据访问</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><strong>模块内部</strong></td>
+<td align="center">相对跳转和调用</td>
+<td align="center">相对地址访问</td>
+</tr>
+<tr>
+<td align="center"><strong>模块外部</strong></td>
+<td align="center">间接跳转和调用（GOT）</td>
+<td align="center">间接访问（GOT）</td>
+</tr>
+</tbody></table>
+<ul>
+<li>还有一个问题<ul>
+<li>编译器无法区分一个外部全局变量是否是模块外部调用还是内部调用</li>
+<li>默认按照模块外部全局变量进行调用<ul>
+<li>即使用GOT</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="性能损耗"><a href="#性能损耗" class="headerlink" title="性能损耗"></a>性能损耗</h3><ul>
+<li>原因<ul>
+<li>对于全局和静态的数据访问即模块间的调用都需要进行复杂的GOT定位，间接调用</li>
+<li>动态链接的链接工作是在运行时完成的，即程序开始执行时，动态链接器都要进行一次链接工作</li>
+</ul>
+</li>
+<li>优化<ul>
+<li>延迟绑定<ul>
+<li>将动态链接从程序启动时进行推迟到当函数第一次被调用时进行</li>
+<li>PLT （Procedure Linkage Table）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>本质是一个方法跳转</li>
+<li>方法重定位后会将地址存入bar@plt</li>
+<li>bar@plt最开始被初始化为push n，即执行下一条指令</li>
+<li>_dl_runtime_resolve进行重定位，将方法真正地址写入bar@plt<br><img src="/2023/02/16/%E8%81%8A%E8%81%8A%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5/dyld-2.png" alt="dyld"></li>
+</ul>
+<h2 id="iOS动态链接过程"><a href="#iOS动态链接过程" class="headerlink" title="iOS动态链接过程"></a>iOS动态链接过程</h2><p>动态链接所需要的信息记录在这个LC_DYLD_INFO_ONLY这个load command中，包括了Rebase Info、Binding Info、Weak Binding Info、Lazy Binding Info和Export Info五部分内容。<br><img src="/2023/02/16/%E8%81%8A%E8%81%8A%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5/dyld-3.png" alt="dyld"></p>
+<h3 id="Rebase"><a href="#Rebase" class="headerlink" title="Rebase"></a>Rebase</h3><blockquote>
+<p>Address space layout randomization (ASLR) is a computer security technique involved in preventing exploitation of memory corruption vulnerabilities. In order to prevent an attacker from reliably jumping to, for example, a particular exploited function in memory, ASLR randomly arranges the address space positions of key data areas of a process, including the base of the executable and the positions of the stack, heap and libraries.</p>
+</blockquote>
+<p>地址空间布局随机化（ASLR）是一种计算机安全技术，可防止利用内存进行漏洞攻击。为了防止攻击者可以依靠地址跳转到内存中的某个特定程序段利用功能，ASLR会随机排列进程的关键数据区域的地址，包括可执行文件、堆栈和库的地址。<br>对内部指针进行调整，Mach-O文件映射到内存中时，ASLR会进行一个随机偏移，所以需要对内部指针进行调整。</p>
+<h3 id="Bind"><a href="#Bind" class="headerlink" title="Bind"></a>Bind</h3><p>对预留的外部指针进行绑定。</p>
+<h4 id="Non-lazy-binding"><a href="#Non-lazy-binding" class="headerlink" title="Non-lazy binding"></a>Non-lazy binding</h4><p>在程序启动时，dyld便通过重定位确定好需动态链接符号的地址。<br>在__DATA.__got段中存储所有non-lazy symbol pointers。</p>
+<h4 id="Lazy-binding"><a href="#Lazy-binding" class="headerlink" title="Lazy binding"></a>Lazy binding</h4><p>当符号首次被调用时，dyld才进行符号绑定操作。<br>Dyld Lazy binding过程详解<br><img src="/2023/02/16/%E8%81%8A%E8%81%8A%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5/dyld-4.png" alt="dyld"><br><img src="/2023/02/16/%E8%81%8A%E8%81%8A%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5/dyld-5.png" alt="dyld"><br>总结一下流程：</p>
+<ol>
+<li>首次调用TEXT.__stub段方法，跳转到对应的DATA.__la_symbol_ptr 方法</li>
+<li>DATA.__la_symbol_ptr 中方法最开始指向到 TEXT.__stub_helper</li>
+<li>TEXT.__stub_helper跳转到libdyld.dylib文件__TEXT段的dyld_stub_binder方法</li>
+<li>dyld内部调用到_dyld_func_lookup方法动态链接到对应方法，并修改对应的__la_symbol_ptr段</li>
+<li>再次调用，由TEXT.__stub段跳转至DATA.__la_symbol_ptr，直接调用对应方法</li>
+</ol>
+<h4 id="CHAIEND-FIXUPS"><a href="#CHAIEND-FIXUPS" class="headerlink" title="CHAIEND FIXUPS"></a>CHAIEND FIXUPS</h4><p>上述Rebase &amp; Bind的过程分析在很多博客中都有过解析，但是我们此时再新建一个工程尝试复刻时，会发现DATA段中的__la_symbol_ptr消失了，这是怎么一回事呢？<br>因为目前新建工程时默认的Minimum Deployments为iOS15.0，苹果使用了CHAINED_FIXUPS取代了之前Rebase &amp; Bind机制。苹果在今年的WWDC session中宣称这项优化实际在iOS13.4及之后的版本便已支持。测试来看仅在Minimum Deployments&gt;=15.0时，Mach-O文件格式会发生变化。<br>使用CHAINED_FIXUPS的Mach-O会在load command中使用LC_DYLD_CHAINED_FIXUPS和LC_DYLD_EXPORTS_TRIE代替LC_DYLD_INFO_ONLY。</p>
+<p><img src="/2023/02/16/%E8%81%8A%E8%81%8A%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5/dyld-6.png" alt="dyld"><br>回顾Rebase &amp; Bind过程，不免发现它存在着几个缺点：</p>
+<ol>
+<li>Rebase和Bind操作对Mach-O文件进行了两次遍历，可能对某些段进行了重复访问，iOS系统会对较长时间没有用到的page进行压缩处理，两遍遍历导致了额外的page压缩与解压缩操作，增加耗时的同时没有利用到空间局部性；</li>
+<li>用于存放Rebase和Bind信息的LINKEDIT段在动态链接完成后失去了作用，但仍占用了Mach-O文件的体积，如果能对这部分空间重复利用的话可以减少包体积。</li>
+</ol>
+<p>Chained Fixups实际上采用链表的方式来将rebase和bind的信息整合到一起，需要进行Rebase/Bind的符号不再被记录到__LINKEDIT中，而是以链表的形式记录到__DATA 段中，__LINKEDIT段仅记录需要修复的segment表头。<br><img src="/2023/02/16/%E8%81%8A%E8%81%8A%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5/dyld-7.png" alt="dyld"><br><img src="/2023/02/16/%E8%81%8A%E8%81%8A%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5/dyld-8.png" alt="dyld"></p>
+<blockquote>
+<p>不使用Chained Fixups：<br><img src="/2023/02/16/%E8%81%8A%E8%81%8A%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5/dyld-9.png" alt="dyld"><br><img src="/2023/02/16/%E8%81%8A%E8%81%8A%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5/dyld-10.png" alt="dyld"><br>使用Chined Fixups：<br><img src="/2023/02/16/%E8%81%8A%E8%81%8A%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5/dyld-11.png" alt="dyld"></p>
+</blockquote>
+<p>对比可以发现，使用Chained Fixups的Mach-O文件DATA段不再保存__la_symbol_ptr，全部使用__got段存储需动态链接的符号，且不再使用空指针占位，而是保存了链表信息，实际是存放了64位大小的 ChainedFixupPointerOnDisk union（可以是 dyld_chained_ptr_64_rebase，dyld_chained_ptr_64_bind，或者其它类型的fixup chain节点），而 dyld 则会利用这部分信息进行 rebase&amp;bind。<br>总体来说，Chained fixup方案中，dyld不需要再去一边读取LINKEDIT段信息一遍做rebase&amp;bind操作，而是直接沿着链表逐个读取节点，这样dyld即可在一次遍历中完成rebase及bind操作，减少了不必要的page压缩及解压缩操作，利用了空间局限性，减少了耗时。</p>
+<h4 id="Page-in-Linking"><a href="#Page-in-Linking" class="headerlink" title="Page-in Linking"></a>Page-in Linking</h4><p>今年的WWDC，苹果又公布了dyld的一项新功能，Page-in Linking。和过去 dyld 在启动时一次性统一修正所有的动态链接库符号不同，dyld现在可以在 page-in 的时候去自动修正 DATA 段内的 page。一直以来，内核都可以通过 mmap() 来访问 page，但是现在，如果它是一个 DATA page，内核在访问的同时还会顺便对其进行 fixup，这种机制减少了脏内存和启动时间，这也意味着 DATA_CONST 段的page是干净的，它们可以像 TEXT 页面一样被暂时移出内存和重新创建，从而减少内存压力。但 page-in linking 只适用于用 chained fixups 构建的二进制文件。这是因为在 chained fixups 中，大部分修复信息将被编码在磁盘上的 DATA 段中，这意味着在 page-in 时内核可以使用这些信息。<br>有一点需要注意的是，dyld 只会在应用启动时使用这一机制。任何后来被 dlopen() 打开的 dylibs 都不会进行 page-in linking。在这种情况下，dyld 会采用传统的方法，在调用 dlopen 时应用 fixup。<br><img src="/2023/02/16/%E8%81%8A%E8%81%8A%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5/dyld-12.png" alt="dyld"></p>
+<h2 id="动态链接在APP中的应用"><a href="#动态链接在APP中的应用" class="headerlink" title="动态链接在APP中的应用"></a>动态链接在APP中的应用</h2><p>iOS系统层面实际上运用了大量的动态链接库，可以在App的Mach-O文件的Load Commands中查看所有LC_LOAD_DYLIB动态库。<br><img src="/2023/02/16/%E8%81%8A%E8%81%8A%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5/dyld-13.png" alt="dyld"><br>但是对于APP来说，只能引入App内签名的动态库和系统签名的动态库，并不能如愿的引入第三方发布的动态链接库，原因在于dyld内部禁止加载非App签名的image文件，尝试加载会触发crashIfInvalidCodeSignature的crash。</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://opensource.apple.com/source/dyld/dyld-239.3/src/ImageLoaderMachO.cpp">https://opensource.apple.com/source/dyld/dyld-239.3/src/ImageLoaderMachO.cpp</a><br><a target="_blank" rel="noopener" href="https://opensource.apple.com/source/xnu/xnu-2422.1.72/osfmk/vm/vm_fault.c">https://opensource.apple.com/source/xnu/xnu-2422.1.72/osfmk/vm/vm_fault.c</a></p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">int ImageLoaderMachO::crashIfInvalidCodeSignature()​</span><br><span class="line">&#123;​</span><br><span class="line">        &#x2F;&#x2F; Now that segments are mapped in, try reading from first executable segment.​</span><br><span class="line">        &#x2F;&#x2F; If code signing is enabled the kernel will validate the code signature​</span><br><span class="line">        &#x2F;&#x2F; when paging in, and kill the process if invalid.​</span><br><span class="line">        for(unsigned int i&#x3D;0; i &lt; fSegmentsCount; ++i) &#123;​</span><br><span class="line">                if ( (segFileOffset(i) &#x3D;&#x3D; 0) &amp;&amp; (segFileSize(i) !&#x3D; 0) ) &#123;​</span><br><span class="line">                        &#x2F;&#x2F; return read value to ensure compiler does not optimize away load​</span><br><span class="line">                        int* p &#x3D; (int*)segActualLoadAddress(i);​</span><br><span class="line">                        return \*p;​</span><br><span class="line">                &#125;​</span><br><span class="line">        &#125;​</span><br><span class="line">        return 0;​</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>即使在代码层面想办法绕过这个crash，在提审阶段，也会因为动态库签名问题遭到拒审。</p>
+<p><strong>应该如何引入动态库？</strong><br>苹果提供Embed这种方式来让项目引入动态库，其含义是不链接进项目的可执行文件，但是会被打包进ipa包，这样实际丧失了动态链接本身的空间优化和动态更新的优点。<br><img src="/2023/02/16/%E8%81%8A%E8%81%8A%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5/dyld-14.png" alt="dyld"><br>但动态链接真的就没有作用了吗？并不是这样。<br>随着大型程序的发展，需要链接的库会越来越多，业务研发同学可能会只专注于几个库的开发，此时将会面临代码修改后，编译链接时长增长、lldb调试卡顿等一系列问题，降低研发效能。<br>而将业务库作为动态链接库进行开发，编译时不再需要每次都重新构建一整个庞大的主二进制文件，而只需要重新构建各自业务对应的小动态库，研发复杂度大大降低，链接、调试和传输慢等一些列问题也就“迎刃而解”了。<br>但是增加动态库也会带来诸多其他问题，比如增加启动耗时。<br>业界普遍采用动态库懒加载方案，在程序启动时候默认不加载这些动态库，在启动结束后通过子线程预加载或者进入对应业务场景时候再按需加载对应的动态库。<br>总之，动态库的使用需要进行斟酌和取舍，研发效率和使用体验总需要进行平衡，没有银弹。</p>
+<h2 id="动态链接在Hook中的应用"><a href="#动态链接在Hook中的应用" class="headerlink" title="动态链接在Hook中的应用"></a>动态链接在Hook中的应用</h2><p>接触过Objc开发的同学对fishhook应该都不陌生，Method swizzle只能针对oc方法生效，对于c方法调用，需要使用fishhook，且fishhook只能针对跨模块方法Hook，为什么这样呢？</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;*</span><br><span class="line"> * A structure representing a particular intended rebinding from a symbol</span><br><span class="line"> * name to its replacement</span><br><span class="line"> *&#x2F;</span><br><span class="line">struct fbr_rebinding &#123;</span><br><span class="line">  const char *name;    &#x2F;&#x2F; 需要hook的方法名称</span><br><span class="line">  void *replacement;   &#x2F;&#x2F; 替换方法的地址</span><br><span class="line">  void **replaced;     &#x2F;&#x2F; 原始方法的地址</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">&#x2F;*</span><br><span class="line"> * For each rebinding in rebindings, rebinds references to external, indirect</span><br><span class="line"> * symbols with the specified name to instead point at replacement for each</span><br><span class="line"> * image in the calling process as well as for all future images that are loaded</span><br><span class="line"> * by the process. If rebind_functions is called more than once, the symbols to</span><br><span class="line"> * rebind are added to the existing list of rebindings, and if a given symbol</span><br><span class="line"> * is rebound more than once, the later rebinding will take precedence.</span><br><span class="line"> *&#x2F;</span><br><span class="line">FISHHOOK_VISIBILITY</span><br><span class="line">int fbr_rebind_symbols(struct fbr_rebinding rebindings[], size_t rebindings_nel);</span><br></pre></td></tr></table></figure>
+<p>fishhook实际上就是对动态链接的符号进行hook，之前我们说过，模块间的方法调用需要通过间接跳转，相关跳转方法最终存在DATA段的__got和__la_symbol_ptr中，通过修改这一部分即可达到Hook效果，而模块内的方法调用是固定在TEXT段中的，因此无法进行修改，这也就解释了为什么fishhook只能针对跨模块方法进行Hook。</p>
+<h2 id="Question"><a href="#Question" class="headerlink" title="Question"></a>Question</h2><ul>
+<li>动态链接的优点和缺点</li>
+<li>地址无关代码、延迟绑定的含义</li>
+<li>Mach-O动态链接过程</li>
+<li>iOS开发中使用动态链接库的意义</li>
+<li>Fishhook原理</li>
+</ul>
+<h2 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h2><p>《程序员的自我修养——链接、装载与库》<br>Link fast: Improve build and launch times<br>Frameworks: embed or not embed that’s the question<br>Dynamic Library Programming Topics<br>iOS15 动态链接 fixup chain 原理详解</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/iOS/"># iOS</a>
+                    
+                        <a href="/tags/linker/"># linker</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2021/12/14/Linux%E9%AB%98%E6%95%88%E6%96%87%E4%BB%B6%E5%A4%84%E7%90%86%E5%91%BD%E4%BB%A4%E2%80%94%E2%80%94grep/">Linux高效文件处理命令——grep</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Skuld | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
