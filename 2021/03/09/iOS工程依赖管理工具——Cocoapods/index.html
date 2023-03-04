@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Skuld">
+
+
+
+
+
+<title>iOS工程依赖管理工具——Cocoapods | Skuld&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 5.1.1"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Skuld&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Skuld&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">iOS工程依赖管理工具——Cocoapods</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Skuld</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">March 9, 2021&nbsp;&nbsp;16:10:31</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/iOS/">iOS</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>本文不涉及源码层面的介绍一下iOS项目工程的依赖管理工具Cocoapods，明确什么是RubyGems、Bundle、Cocoapods，为什么要使用这些工具以及我们还可以使用这些工具做些什么。</p>
+<h1 id="What’s-RVM"><a href="#What’s-RVM" class="headerlink" title="What’s RVM?"></a>What’s RVM?</h1><p>RVM是一个命令行工具，用来方便的管理用户环境下的ruby版本。<br>安装rvm后会在用户目录下创建.rvm文件夹，并在此路径下进行ruby版本管理。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">rvm list</span><br><span class="line">rvm use XXX</span><br><span class="line">rvm remove XXX</span><br></pre></td></tr></table></figure>
+<h1 id="What’s-RubyGems-amp-Gem"><a href="#What’s-RubyGems-amp-Gem" class="headerlink" title="What’s RubyGems &amp; Gem?"></a>What’s RubyGems &amp; Gem?</h1><p><img src="/2021/03/09/iOS%E5%B7%A5%E7%A8%8B%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E2%80%94%E2%80%94Cocoapods/image1.png" alt="image"><br>RubyGems是Ruby代码的一个包管理工具，在此框架下，一个Ruby包称为一个“Gem”，包含了一组特定功能的Ruby代码。<br>RubyGems同样也是 <a target="_blank" rel="noopener" href="https://rubygems.org/">https://rubygems.org/</a> 的客户端，所有的Gem组件都会发布到该平台上，当我们执行 gem install xxx 命令时就是从该平台上获取对应的Gem资源。</p>
+<blockquote>
+<p>使用 gem sources -l 可以查看本地环境的gem源地址<br>gem sources -a/–add SOURCE_URI<br>gem sources -r/–remove SOURCE_URI<br>可以添加或者删除gem源</p>
+</blockquote>
+<p>每一个Gem都由三部分组成：</p>
+<ul>
+<li>Code</li>
+<li>Documentation</li>
+<li>gemspec</li>
+</ul>
+<p>gemspec是Gem的描述文件，描述了Gem的作者、版本、元数据地址等等信息。<br><img src="/2021/03/09/iOS%E5%B7%A5%E7%A8%8B%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E2%80%94%E2%80%94Cocoapods/image2.png" alt="image"></p>
+<h2 id="advance"><a href="#advance" class="headerlink" title="advance"></a>advance</h2><p>Ruby工程组件化</p>
+<h2 id="disadvance"><a href="#disadvance" class="headerlink" title="disadvance"></a>disadvance</h2><p>引入过多的gem会导致需要多次调用install gem XXX；<br>多gem还会引入依赖问题，设想你在本地开发项目A过程中使用了Gem1的2.0版本，而在开发项目B过程中又需要使用Gem1的3.0版本，这样环境中同时会存在两份Gem1，RubyGems会去使用gem最新的版本，因此可能会导致项目A无法运行，这种情况在多环境开发下更为显著，install gem XXX在不同时间调用时安装的gem版本可能也不相同。</p>
+<h1 id="What’s-Bundle"><a href="#What’s-Bundle" class="headerlink" title="What’s Bundle?"></a>What’s Bundle?</h1><blockquote>
+<p>Bundler is an exit from dependency hell.</p>
+</blockquote>
+<p>Bundle是一个Gem库，通过追踪并安装所需的Gem版本来为Ruby工程提供一致的开发环境，确保在开发、预发布和生产环境中都存在需要的Gem。</p>
+<p>每个Ruby工程中的gem依赖关系由位于工程根目录下的Gemfile文件进行描述，同时bundle会生成Gemfile.lock文件进行版本控制。</p>
+<h2 id="bundle-install"><a href="#bundle-install" class="headerlink" title="bundle install"></a>bundle install</h2><p>该命令会安装Gemfile中指定的Gem依赖项。<br>如果是第一次执行该命令（未存在Gemfile.lock文件），bundle会获取远程Gem源，根据Gemfile进行依赖解析并安装所需的Gem，并将安装的gem名称和版本写入Gemfile.lock文件内。<br>如果存在Gemfile.lock文件，Gemfile未更新，bundle将不进行依赖解析，直接使用Gemfile.lock内的Gem版本进行安装；如果Gemfile更新过，bundle将对更新的gem进行依赖解析并进行安装，其余未更新的gem仍然使用Gemfile.lock内的版本。</p>
+<h2 id="bundle-exec"><a href="#bundle-exec" class="headerlink" title="bundle exec"></a>bundle exec</h2><blockquote>
+<p>Execute a command in the context of the bundle.</p>
+</blockquote>
+<p>这句话看起来很抽象，直接翻译为在bundle的上下文中执行一个命令。<br>实际上，如果你想使用Gemfile中指定的gem去执行一个ruby命令且使用bundle install去下载该gem，就应该使用bundle exec命令。<br>如何做到的？<br>查看工程项目内中Gemfile和Gemfile.lock文件中指定的cocoapod版本，使用bundle exec ruby -e ‘puts $LOAD_PATH’查看加载路径，再使用pod env查看本地项目工程的cocoapods环境。<br>bundle exec会进行修改LOAD_PATH，让ruby加载Gemfile中指定版本的gem。<br><img src="/2021/03/09/iOS%E5%B7%A5%E7%A8%8B%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E2%80%94%E2%80%94Cocoapods/image3.png" alt="image"><br><img src="/2021/03/09/iOS%E5%B7%A5%E7%A8%8B%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E2%80%94%E2%80%94Cocoapods/image4.png" alt="image"><br><img src="/2021/03/09/iOS%E5%B7%A5%E7%A8%8B%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E2%80%94%E2%80%94Cocoapods/image5.png" alt="image"></p>
+<p>如果在项目工程目录下存在Gemfile的话，理论上之后调用Gemfile中指定的Gem相关命令的话都需要添加bundle exec命令前缀。</p>
+<p>Q：这样太麻烦了，有没有其他方法解决？<br>A：有，rubygems-bundler这个gem就是为此而生的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gem install rubygems-bundler</span><br><span class="line">gem regenerate_binstubs</span><br></pre></td></tr></table></figure>
+<p>这样即可省略掉每次添加bundle exec的麻烦。</p>
+<h1 id="What’s-Cocoapods"><a href="#What’s-Cocoapods" class="headerlink" title="What’s Cocoapods?"></a>What’s Cocoapods?</h1><p>Cocoapods也是一个Gem，负责用来管理XCode项目的依赖。<br>同bundle类似，在项目工程的根目录中可以使用一个简单的文本文件Podfile来进行依赖项指定，实际上，cocoapods会将Podfile当作一个ruby文件进行处理，这也使得我们可以在Podfile进行一些逻辑处理。</p>
+<h2 id="Podfile"><a href="#Podfile" class="headerlink" title="Podfile"></a>Podfile</h2><blockquote>
+<p>The Podfile is a specification that describes the dependencies of the targets of one or more Xcode projects.</p>
+</blockquote>
+<p>Podfile是一种描述一个或多个Xcode目标项目依赖关系的规范格式，使用pod init命令可以快速的为你的项目工程生成一个podfile。</p>
+<h3 id="install"><a href="#install" class="headerlink" title="install!"></a>install!</h3><p>install! “cocoapods”, :warn_for_multiple_pod_sources =&gt; false, :deterministic_uuids =&gt; false</p>
+<p>指定了Cocoapods安装此podfile的方法与选项。</p>
+<ul>
+<li>:clean<ul>
+<li>安装过程中是否清除pod的来源，默认为true，将会清除未被pod依赖的文件；</li>
+</ul>
+</li>
+<li>:deduplicate_targets<ul>
+<li>是否对pod的重复数据进行删除，默认为true；</li>
+<li><img src="/2021/03/09/iOS%E5%B7%A5%E7%A8%8B%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E2%80%94%E2%80%94Cocoapods/image6.png" alt="image"></li>
+</ul>
+</li>
+<li>:deterministic_uuids<ul>
+<li>创建Pod工程时是否生成特定的UUID，默认为true；</li>
+</ul>
+</li>
+<li>:integrate_targets<ul>
+<li>是否将已下载的pod集成到用户工程中，默认为true；</li>
+</ul>
+</li>
+<li>:lock_pod_sources<ul>
+<li>是否锁定Pod的源文件，尝试修改文件内容时，Xcode会出现解锁文件提示，默认为true；</li>
+<li>在安装过程中锁定Pod会降低性能，如果这严重影响项目的Pod安装时间，可以尝试将其设置为false；</li>
+</ul>
+</li>
+<li>:warn_for_multiple_pod_sources<ul>
+<li>当多个源包含名称和版本相同的Pod时是否发出警告，默认为true；</li>
+</ul>
+</li>
+<li>:preserve_pod_file_structure<ul>
+<li>是否保留所有Pod的文件结构，包括外部来源的Pod，默认为false；</li>
+<li>默认情况下，仅保留development pod源的文件结构；</li>
+</ul>
+</li>
+<li>:share_schemes_for_development_pods<ul>
+<li>是否为所有develop pod共享Xcode scheme，默认为false；</li>
+<li>Develop pod的scheme时自动创建，而默认情况下并不共享；</li>
+</ul>
+</li>
+<li>:disable_input_output_paths<ul>
+<li>是否禁用Cocoapods脚本阶段（复制Frameworks和资源）的输入输出路径；</li>
+<li>默认为false；</li>
+</ul>
+</li>
+<li>:generate_multiple_pod_projects<ul>
+<li>是否为每个Pod生成一个项目工程，默认为false；</li>
+<li>此选项将在Pods.xcodeproj下的每个pod生成一个项目工程；</li>
+</ul>
+</li>
+<li>:incremental_installation<ul>
+<li>是否仅重新生成自上次安装后改变的目标pod和它们相关的文件，默认为fasle；</li>
+</ul>
+</li>
+<li>:skip_pods_project_generation<ul>
+<li>是否跳过生成Pods.xcodeproj文件，仅进行pod依赖关系解析和下载，默认为false；</li>
+</ul>
+</li>
+</ul>
+<h3 id="pod"><a href="#pod" class="headerlink" title="pod"></a>pod</h3><p>项目工程的依赖源。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"># Version</span><br><span class="line"># 不指定版本号将使用最新版本</span><br><span class="line">pod_source &quot;ACDebugBoard&quot;</span><br><span class="line">pod_source &quot;ACDebugBoard&quot;, &quot;0.0.0.1&quot;</span><br><span class="line">&#x3D;begin</span><br><span class="line">&#x3D; 0.1             Version 0.1.</span><br><span class="line">&gt; 0.1             Any version higher than 0.1.</span><br><span class="line">&gt;&#x3D; 0.1            Version 0.1 and any higher version.</span><br><span class="line">&lt; 0.1             Any version lower than 0.1.</span><br><span class="line">&lt;&#x3D; 0.1            Version 0.1 and any lower version.</span><br><span class="line">~&gt; 0.1.2          Version 0.1.2 and the versions up to 0.2, not including 0.2. This operator works based onthe last componentthat you specify in your version requirement. The example is equal to&gt;&#x3D; 0.1.2combined with&lt; 0.2.0and will always match the latest known version matching your requirements.</span><br><span class="line">~&gt; 0.1.3-beta.0   Beta and release versions for 0.1.3, release versions up to 0.2 excluding 0.2. Components separated by a dash (-) will not be considered for the version requirement.</span><br><span class="line">&#x3D;end</span><br><span class="line"></span><br><span class="line"># Build configurations</span><br><span class="line">pod_source &quot;ACDebugBoard&quot;, &quot;0.0.0.1&quot;, :configurations &#x3D;&gt; &#39;Debug&#39;</span><br><span class="line">pod_source &quot;ACDebugBoard&quot;, &quot;0.0.0.1&quot;, :configurations &#x3D;&gt; [&quot;Debug&quot;, &quot;Preview&quot;, &quot;Monkey&quot;]</span><br><span class="line"># Note that transitive dependencies are included in all configurations and you have to manually specify build configurations for them as well in case this is not desired.</span><br><span class="line"></span><br><span class="line"># Subspecs</span><br><span class="line"># 如果不指定subspec，将默认安装pod的所有subspec</span><br><span class="line">pod_binary &quot;AirClass&quot;,&#39;1.0.7-rc.3&#39;, :subspecs &#x3D;&gt; [&quot;Core&quot;]</span><br><span class="line"></span><br><span class="line"># library repository</span><br><span class="line"># 使用master分支</span><br><span class="line">pod &#39;AFNetworking&#39;, :git &#x3D;&gt; &#39;https:&#x2F;&#x2F;github.com&#x2F;gowalla&#x2F;AFNetworking.git&#39;</span><br><span class="line"></span><br><span class="line">pod &#39;AFNetworking&#39;, :git &#x3D;&gt; &#39;https:&#x2F;&#x2F;github.com&#x2F;gowalla&#x2F;AFNetworking.git&#39;, :branch &#x3D;&gt; &#39;dev&#39;</span><br><span class="line"></span><br><span class="line">pod &#39;AFNetworking&#39;, :git &#x3D;&gt; &#39;https:&#x2F;&#x2F;github.com&#x2F;gowalla&#x2F;AFNetworking.git&#39;, :tag &#x3D;&gt; &#39;0.7.0&#39;</span><br><span class="line"></span><br><span class="line">pod &#39;AFNetworking&#39;, :git &#x3D;&gt; &#39;https:&#x2F;&#x2F;github.com&#x2F;gowalla&#x2F;AFNetworking.git&#39;, :commit &#x3D;&gt; &#39;082f8319af&#39;</span><br><span class="line"></span><br><span class="line"># 使用本地路径，以Pods项目工程目录为根目录</span><br><span class="line">pod &#39;AFNetworking&#39;, :path &#x3D;&gt; &#39;~&#x2F;Documents&#x2F;AFNetworking&#39;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Podspec"><a href="#Podspec" class="headerlink" title="Podspec"></a>Podspec</h2><p>podspec是一个pod的规范描述格式。<br>使用pod spec create SPEC_NAME命令可以快速创建一个podspec文件。<br><img src="/2021/03/09/iOS%E5%B7%A5%E7%A8%8B%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E2%80%94%E2%80%94Cocoapods/image7.png" alt="image"></p>
+<p>所有的spec参数列表在这里：<a target="_blank" rel="noopener" href="https://guides.cocoapods.org/syntax/podspec.html#specification">https://guides.cocoapods.org/syntax/podspec.html#specification</a></p>
+<ul>
+<li>prepare_command<ul>
+<li>在pod下载之后要执行的脚本文件，该命令将在pod被清理和Pods.xcodeproj生成之前执行，可以用该命令下载、修改、删除任何文件；<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">spec.prepare_command &#x3D; &#39;ruby build_files.rb&#39;</span><br><span class="line">spec.prepare_command &#x3D; &lt;&lt;-CMD</span><br><span class="line">                        sed -i &#39;s&#x2F;MyNameSpacedHeader&#x2F;Header&#x2F;g&#39; .&#x2F;**&#x2F;*.h</span><br><span class="line">                        sed -i &#39;s&#x2F;MyNameOtherSpacedHeader&#x2F;OtherHeader&#x2F;g&#39; .&#x2F;**&#x2F;*.h</span><br><span class="line">                   CMD</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>deprecated<ul>
+<li>spec.deprecated = true</li>
+<li>标记该pod是非被废弃；</li>
+</ul>
+</li>
+<li>compiler_flags<ul>
+<li>spec.compiler_flags = ‘-DOS_OBJECT_USE_OBJC=0’, ‘-Wno-format’</li>
+<li>传递给编译器的一个标记列表；</li>
+</ul>
+</li>
+<li>pod_target_xcconfig<ul>
+<li>spec.pod_target_xcconfig = { ‘OTHER_LDFLAGS’ =&gt; ‘-lObjC’ }</li>
+<li>修改Pod.xcodeproj的xcconfig文件标志；</li>
+</ul>
+</li>
+<li>user_target_xcconfig<ul>
+<li>spec.user_target_xcconfig = { ‘MY_SUBSPEC’ =&gt; ‘YES’ }</li>
+<li>修改目标工程的xcconfig文件标志，不建议使用，因为Pods.xcodeproj不应该影响目标工程文件；</li>
+</ul>
+</li>
+<li>source_files<ul>
+<li>spec.source_files = ‘Classes/*<em>/</em>.{h,m}’</li>
+<li>Pod的源文件；</li>
+</ul>
+</li>
+<li>preserve_paths<ul>
+<li>spec.preserve_path = ‘IMPORTANT.txt’</li>
+<li>pod下载后需要保留的文件路径，默认情况下，cocoapods会删除与文件模式不匹配的文件；</li>
+</ul>
+</li>
+<li>resource_bundles<ul>
+<li>s.resource_bundles = {‘ClassroomEVResource’ =&gt; [‘ClassroomEV/Resources/*’]}</li>
+<li>指定pod的资源列表，podspec支持resource和resource_bundles两个不同的关键字来指定资源文件，但是cocoapods强烈推荐使用resource_bundles进行资源文件的指定，因为通过使用resource_bundles可以避免项目工程中不同pod的资源文件同名冲突。</li>
+</ul>
+</li>
+</ul>
+<h1 id="Podfile-lock"><a href="#Podfile-lock" class="headerlink" title="Podfile.lock"></a>Podfile.lock</h1><p>在进行一次pod install或者pod update后，cocoapods会将安装的版本信息写入到podfile.lock文件中，因为Podfile中可能不会显示的指定pod的版本，cocoapods使用podfile.lock进行详细的版本控制。<br>可以使用pod outdated命令显示当前Podfile.lock版本落后的pod。</p>
+<h2 id="Manifest-lock"><a href="#Manifest-lock" class="headerlink" title="Manifest.lock"></a>Manifest.lock</h2><p>manifest.lock是podfile.lock文件的副本，一般工程不对Pods进行版本管理，而对podfile.lock进行版本管理，为了判断Pods下的pod与podfile.lock中的pod版本是否一致，否则会在编译时提示报错。</p>
+<h1 id="pod-install-vs-pod-update"><a href="#pod-install-vs-pod-update" class="headerlink" title="pod install vs. pod update"></a>pod install vs. pod update</h1><h2 id="pod-install"><a href="#pod-install" class="headerlink" title="pod install"></a>pod install</h2><ul>
+<li><p>在每次执行pod install命令时，会将下载并安装的pod版本写入到Podfile.lock文件中；</p>
+</li>
+<li><p>而在执行pod install命令时，仅会对那些未在Podfile.lock中指定版本的pod进行操作；</p>
+<ul>
+<li>对于未在Podfile.lock中指定版本的pod，将会搜索Podfile文件中描述的相对应版本</li>
+<li><img src="/2021/03/09/iOS%E5%B7%A5%E7%A8%8B%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E2%80%94%E2%80%94Cocoapods/image8.png" alt="image"></li>
+</ul>
+</li>
+<li><p>依赖解析算法Molinillo</p>
+</li>
+</ul>
+<h2 id="pod-update"><a href="#pod-update" class="headerlink" title="pod update"></a>pod update</h2><ul>
+<li>执行pod update命令时，将不会考虑podfile.lock文件中指定的pod版本，寻找一个符合Podfile中规定的最新版本进行下载安装。</li>
+</ul>
+<p>项目中应该采取怎样的依赖控制方法？</p>
+<ol>
+<li>将Gemfile和Gemfile.lock纳入版本管理（必要）；<br><img src="/2021/03/09/iOS%E5%B7%A5%E7%A8%8B%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E2%80%94%E2%80%94Cocoapods/image9.png" alt="image"></li>
+<li>是否需要将Podfile.lock纳入版本管理？</li>
+</ol>
+<ul>
+<li>纳入的影响：<ul>
+<li>每次需要进行pod install，不能方便的更改pod版本，每次提交时有限制；</li>
+<li>拉取代码冲突；</li>
+</ul>
+</li>
+<li>不纳入的影响：<ul>
+<li>podfile中需要严格指定每个pod的版本，不然会出现pod版本冲突；</li>
+<li>拉取代码后，不能显式的提醒需要进行pod install，可能有潜在的隐患；</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/iOS/"># iOS</a>
+                    
+                        <a href="/tags/Cocoapods/"># Cocoapods</a>
+                    
+                        <a href="/tags/Ruby/"># Ruby</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2021/11/19/Windows-Clion%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">Windows+Clion环境搭建</a>
+            
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Skuld | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
