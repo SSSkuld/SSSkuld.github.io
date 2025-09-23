@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Skuld">
+
+
+
+
+
+<title>Bazel入门 | Skuld&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 5.1.1"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Skuld&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Skuld&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Bazel入门</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Skuld</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">September 24, 2025&nbsp;&nbsp;3:10:47</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Bazel/">Bazel</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>Bazel是Google开源的一套构建系统，具备可并行、支持分布式编译缓存、可扩展性好、多语言支持等优点。</p>
+<p>目前业界中在iOS工程和C++工程中被广泛运用，本文将从iOS开发者的视角带大家初步了解一下BAZEL。</p>
+<h1 id="从构建系统说起"><a href="#从构建系统说起" class="headerlink" title="从构建系统说起"></a>从构建系统说起</h1><p>为什么需要构建系统？</p>
+<p>可能对于大多数iOS开发者来说，构建系统这个概念是比较陌生的，因为XCode将其内置的足够便利，大部分情况下，开发人员只需要按下command+B等待编译即可。</p>
+<p>但实际上，按下command+B后，背后实际是xcodebuild一系列的操作，从依赖分析开始，到编译、链接，最终打包为ipa并安装到目标设备上，而构建系统就是为了管理这些操作。</p>
+<p>对于XCode来说，其自带构建系统是xcodebuild，对于Android来说，最常用的构建系统是Gradle。</p>
+<p>XCode将xcodebuild以GUI的形式进行了集成，主要通过Build Settings、Build Phases、Targets、Scheme等概念，将构建过程分解为多个阶段，每个阶段可以配置不同的参数，从而实现定制化的构建。</p>
+<h1 id="Why-Bazel"><a href="#Why-Bazel" class="headerlink" title="Why Bazel"></a>Why Bazel</h1><p>虽然XCode通过GUI将xcodebuild集成的足够方便快捷，但也有其缺点，实现过于黑盒，构建步骤不清晰且缓存利用效率低，尤其在大型项目中构建速度不容乐观。</p>
+<p>目前业界将目标转至Bazel基本出发点也都是为了编译效率。</p>
+<p>相比之下，Bazel的优势在于构建过程足够清晰，通过DSL文件描述，在输入文件不变的情况下，能保证在不同环境下具有同样的输出，这就为分布式编译及缓存复用提供了前置条件，有利于编译效率的提升。</p>
+<h1 id="Bazel介绍"><a href="#Bazel介绍" class="headerlink" title="Bazel介绍"></a>Bazel介绍</h1><h2 id="WORKSPACE"><a href="#WORKSPACE" class="headerlink" title="WORKSPACE"></a>WORKSPACE</h2><p>首先，Bazel需要一个工作区，也就是工程主目录，依靠<code>WORKSPACE</code>文件声明。</p>
+<p><code>WORKSPACE</code>文件包含要构建的软件的源文件，以及指向包含构建输出的目录的符号链接。每个工作区目录都有一个名为 <code>WORKSPACE</code> 的文本文件，该文件可能为空，也可能包含对构建输出所需的外部依赖项的引用。</p>
+<p>在iOS工程概念中，<code>WORKSPACE</code>对应描述cocoapods体系下的.xcworkspace工程文件及Podfile外部依赖。</p>
+<p>Bazel 还支持 <code>WORKSPACE.bazel</code> 文件作为 <code>WORKSPACE</code> 文件的别名。如果两个文件都存在，则优先使用 <code>WORKSPACE.bazel</code> 。</p>
+<p>但在Bazel8及后续规划中，将废弃掉WORKSPACE的概念，使用Bzlmod来代替，在Bazel 6.3及更高版本中，<code>WORKSPACE</code> 文件已替换为 <code>MODULE.bazel</code>文件。</p>
+<h2 id="BUILD-files"><a href="#BUILD-files" class="headerlink" title="BUILD files"></a>BUILD files</h2><p>BUILD文件用来描述每个软件包（package），对应iOS工程概念中的一个Pod仓库或者一个工程仓库。</p>
+<p>BUILD文件可以被命名为<code>BUILD</code>或者<code>BUILD.bazel</code>，如果两者同时存在，则优先使用<code>BUILD.bazel</code>。</p>
+<p>BUILD文件使用<a href="https://github.com/bazelbuild/starlark/">Starlark</a>实现，其内部描述了每个package是如何构建的，内容并不包含任何函数，且Starlark程序中不能执行任何I/O，只用来声明构建规则。这一点特性保证了构建过程的可重复性，在BUILD文件输入不变的情况下，会执行相同的构建过程并产生相同的构建产物。</p>
+<p>如果代码依赖或者构建命令有变化，需要修改对应的BUILD文件。</p>
+<h2 id="Action-Graph"><a href="#Action-Graph" class="headerlink" title="Action Graph"></a>Action Graph</h2><p>通过BUILD文件和WORKSPACE文件，便能声明整个项目的构建规则，BAZEL通过解析这些内容生成一张有向无环图（DAG）来描述具体的构建过程。</p>
+<p>每一个节点是一个构建动作，每一条边代表构建动作的依赖关系。依赖Action Graph，BAZEL可以方便的实现并行构建以及增量构建。</p>
+<h3 id="Aquery"><a href="#Aquery" class="headerlink" title="Aquery"></a>Aquery</h3><p>aquery是BAZEL提供的用于查询Action Graph的工具，通过aquery，我们可以清晰的知道构建过程中的任何细节，以此来优化构建过程。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/Bazel/"># Bazel</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2023/02/16/%E8%81%8A%E8%81%8A%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5/">聊聊动态链接</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Skuld | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
