@@ -1,10 +1,12 @@
 ---
 title: Bazel入门
 tags:
-- Bazel
+  - Bazel
 categories:
-- Bazel
+  - Bazel
+date: 2025-09-24 03:10:47
 ---
+
 
 # 前言
 
